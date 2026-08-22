@@ -1,6 +1,7 @@
 import streamlit as st
 import base64
-from runwayml import RunwayML, TaskFailedError
+import fal_client
+from runwayml import RunwayML
 
 st.set_page_config(
     page_title="My Image to Video",
@@ -76,9 +77,9 @@ if st.button(" Generate Video", use_container_width=True):
             else:
                 st.error("Video output မရပါ။ ပြန်စမ်းကြည့်ပါ။")
 
-        except TaskFailedError as e:
-            st.error("Video generation မအောင်မြင်ပါ။")
-            st.write(e.task_details)
+    
+            
+        
 
         except Exception as e:
             st.error("Error တစ်ခုဖြစ်သွားပါတယ်။")
