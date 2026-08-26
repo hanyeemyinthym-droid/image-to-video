@@ -1,3 +1,4 @@
 streamlit
 fal-client
 runwayml
+edge-tts
