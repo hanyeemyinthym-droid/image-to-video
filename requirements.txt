@@ -1,4 +1,5 @@
 streamlit
 fal-client
-runwayml
 edge-tts
+requests
+imageio-ffmpeg
