@@ -469,6 +469,7 @@ with tab_story:
                 "nilar_image",
                 "thiha_image",
                 "dialogue",
+                "existing_video",
             ]:
                 st.session_state.pop(
                     f"scene_{last}_{suffix}",
@@ -499,6 +500,32 @@ with tab_story:
             dialogue_items = []
             invalid_lines = []
             speaker_images = {}
+
+            # -------------------------------------------------
+            # Recover / reuse an already-downloaded Scene MP4.
+            # This avoids spending fal credits again if the
+            # Streamlit session reconnects or resets.
+            # -------------------------------------------------
+            with st.expander("📤 Download ထားပြီးသား Scene Video ပြန်သုံးမယ်"):
+                existing_video = st.file_uploader(
+                    f"Scene {scene_no} MP4 ကိုရွေးပါ",
+                    type=["mp4"],
+                    key=f"scene_{scene_no}_existing_video",
+                    help="အရင် Generate လုပ်ပြီး Download သိမ်းထားတဲ့ Scene MP4 ကို ဒီမှာပြန်တင်နိုင်ပါတယ်။",
+                )
+
+                if existing_video is not None:
+                    st.video(existing_video)
+
+                    if st.button(
+                        f"✅ ဒီ MP4 ကို Scene {scene_no} အဖြစ်သုံးမယ်",
+                        use_container_width=True,
+                        key=f"use_existing_scene_{scene_no}",
+                    ):
+                        st.session_state[f"scene_{scene_no}_video"] = existing_video.getvalue()
+                        st.session_state.final_story_video = None
+                        st.success(f"✅ Scene {scene_no} ကို ပြန်ထည့်ပြီးပါပြီ — fal credit မကုန်ပါ။")
+                        st.rerun()
 
             if scene_mode.startswith("🧍"):
                 speaker = st.selectbox(
@@ -696,6 +723,13 @@ with tab_story:
         f"Generated Scenes: {len(generated_scene_videos)} / "
         f"{st.session_state.scene_count}"
     )
+
+    if len(generated_scene_videos) < st.session_state.scene_count:
+        st.caption(
+            "💡 Session ပြန်စသွားလို့ Scene ပျောက်ရင် Scene အတွင်းက "
+            "‘Download ထားပြီးသား Scene Video ပြန်သုံးမယ်’ မှာ MP4 ပြန်တင်ပါ။ "
+            "Generate ထပ်လုပ်စရာမလိုလို့ fal credit မကုန်ပါ။"
+        )
 
     if generated_scene_numbers:
         st.caption(
