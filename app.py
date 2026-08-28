@@ -15,12 +15,12 @@ except ImportError:
 
 
 st.set_page_config(
-    page_title="AI Image to Video",
+    page_title="HYM AI to Video",
     page_icon="🎬",
     layout="centered",
 )
 
-st.title("🎬 AI Image to Video")
+st.title("🎬 HYM AI Video")
 st.caption("ပုံတစ်ပုံတင်ပြီး 9:16 သို့မဟုတ် 16:9 AI Video ထုတ်နိုင်ပါတယ်။")
 
 
