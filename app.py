@@ -75,6 +75,7 @@ def build_free_motion_video(
     """
     Create a 5/10-second MP4 from one still image locally.
     No FAL/Runway API call, so no AI-provider credit is used.
+    Motion has been made stronger so the movement is easier to notice.
     """
     fps = 30
     frames = max(1, int(duration * fps))
@@ -90,30 +91,34 @@ def build_free_motion_video(
             f"crop={width}:{height}"
         )
 
+        total = max(1, frames - 1)
+
         if motion == "Slow Zoom In":
-            z = f"1+0.12*on/{max(1, frames-1)}"
+            # stronger visible zoom
+            z = f"1+0.28*on/{total}"
             x = "iw/2-(iw/zoom/2)"
             y = "ih/2-(ih/zoom/2)"
         elif motion == "Slow Zoom Out":
-            z = f"1.12-0.12*on/{max(1, frames-1)}"
+            z = f"1.28-0.28*on/{total}"
             x = "iw/2-(iw/zoom/2)"
             y = "ih/2-(ih/zoom/2)"
         elif motion == "Pan Left → Right":
-            z = "1.10"
-            x = f"(iw-iw/zoom)*on/{max(1, frames-1)}"
+            z = "1.25"
+            x = f"(iw-iw/zoom)*on/{total}"
             y = "ih/2-(ih/zoom/2)"
         elif motion == "Pan Right → Left":
-            z = "1.10"
-            x = f"(iw-iw/zoom)*(1-on/{max(1, frames-1)})"
+            z = "1.25"
+            x = f"(iw-iw/zoom)*(1-on/{total})"
             y = "ih/2-(ih/zoom/2)"
         elif motion == "Pan Up":
-            z = "1.10"
+            z = "1.25"
             x = "iw/2-(iw/zoom/2)"
-            y = f"(ih-ih/zoom)*(1-on/{max(1, frames-1)})"
+            y = f"(ih-ih/zoom)*(1-on/{total})"
         else:  # Gentle Auto
-            z = f"1+0.08*on/{max(1, frames-1)}"
-            x = "iw/2-(iw/zoom/2)"
-            y = "ih/2-(ih/zoom/2)"
+            # diagonal drift + moderate zoom so it still feels soft but visible
+            z = f"1.08+0.14*on/{total}"
+            x = f"(iw-iw/zoom)*0.18*on/{total}"
+            y = f"(ih-ih/zoom)*0.10*on/{total}"
 
         fade_out_start = max(0.0, float(duration) - 0.25)
         vf = (
@@ -317,7 +322,8 @@ if provider.startswith("🆓"):
     st.info(
         "🆓 ဒီ mode က API credit မသုံးပါ။ "
         "ပုံကို Zoom / Pan လှုပ်ရှားမှုနဲ့ MP4 ပြောင်းပေးတာဖြစ်ပြီး "
-        "Kling လို လူကို AI နဲ့ တကယ်လှုပ်ရှားစေတာ မဟုတ်ပါ။"
+        "Kling လို လူကို AI နဲ့ တကယ်လှုပ်ရှားစေတာ မဟုတ်ပါ။ "
+        "ပိုသိသာတဲ့ movement လိုချင်ရင် Slow Zoom In သို့ Pan Left → Right ကိုရွေးပါ။"
     )
 
 uploaded_image = st.file_uploader(
