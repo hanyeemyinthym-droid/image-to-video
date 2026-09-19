@@ -3,3 +3,4 @@ fal-client
 runwayml
 requests
 imageio-ffmpeg
+Pillow
